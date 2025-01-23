@@ -1,10 +1,11 @@
-import json
+import orjson as json
 from collections import OrderedDict
 from node_serializable import Serializable
 
 from node_graphics_scene import QTRGraphicsScene
 from node_node import Node
 from node_edge import Edge
+from node_scene_history import SceneHistory
 
 
 class Scene(Serializable):
@@ -16,6 +17,7 @@ class Scene(Serializable):
         self.scene_height = 64000
 
         self.initUI()
+        self.history = SceneHistory(self)
 
     def initUI(self):
         self.grScene = QTRGraphicsScene(self)
@@ -41,16 +43,16 @@ class Scene(Serializable):
         print("saveToFile")
         with open(filename, "w") as file:
             print("With Open saveToFile")
-            file.write(json.dumps(self.serialize(), indent=4))
+            file.write(json.dumps(self.serialize(), option=json.OPT_INDENT_2).decode("utf-8"))
         print("saving to", filename, "was successfull.")
 
     def loadFromFile(self, filename):
+        # TODO: Add loading bar for file
         try:
             # Open and read the file
-            with open(filename, "r", encoding="utf-8") as file:
+            with open(filename, "r") as file:
                 raw_data = file.read()
                 print("Got raw data!")
-
             # Parse JSON data
             data = json.loads(raw_data)
             print("Data:", data)
@@ -87,7 +89,6 @@ class Scene(Serializable):
         ])
 
     def deserialize(self, data, hashmap={}):
-        print("deserializing data", data)
         self.clear()
         hashmap = {}
 

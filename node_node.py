@@ -5,6 +5,7 @@ from node_socket import *
 
 DEBUG = False
 
+
 class Node(Serializable):
     def __init__(self, scene, title="Undefined Node", inputs=[], outputs=[]):
         super().__init__()
@@ -21,20 +22,19 @@ class Node(Serializable):
 
         self.socket_spacing = 22
 
-
         self.inputs = []
         self.outputs = []
 
         counter = 0
         for item in inputs:
-            print("LEFT_BOTTOM:",LEFT_BOTTOM)
+            # print("LEFT_BOTTOM:", LEFT_BOTTOM)
             socket = Socket(node=self, index=counter, position=LEFT_BOTTOM, socket_type=item)
             counter += 1
             self.inputs.append(socket)
 
         counter = 0
         for item in outputs:
-            print("RIGHT_TOP",RIGHT_TOP)
+            # print("RIGHT_TOP", RIGHT_TOP)
             socket = Socket(node=self, index=counter, position=RIGHT_TOP, socket_type=item)
             counter += 1
             self.outputs.append(socket)

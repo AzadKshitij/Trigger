@@ -1,126 +1,135 @@
 {
-    "id": 2167603184976,
-    "scene_width": 64000,
-    "scene_height": 64000,
-    "nodes": [
+  "id": 3205465422928,
+  "scene_width": 64000,
+  "scene_height": 64000,
+  "nodes": [
+    {
+      "id": 1967326512080,
+      "title": "My Awesome Node 1",
+      "pos_x": -350.0,
+      "pos_y": -250.0,
+      "inputs": [
         {
-            "id": 2429663837456,
-            "title": "My Awesome Node 1",
-            "pos_x": -350.0,
-            "pos_y": -250.0,
-            "inputs": [
-                {
-                    "id": 2429684641744,
-                    "index": 0,
-                    "position": 2,
-                    "socket_type": 0
-                },
-                {
-                    "id": 2429684642384,
-                    "index": 1,
-                    "position": 2,
-                    "socket_type": 0
-                },
-                {
-                    "id": 2429684643152,
-                    "index": 2,
-                    "position": 2,
-                    "socket_type": 0
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 2429684643920,
-                    "index": 0,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "content": {}
+          "id": 1967326589584,
+          "index": 0,
+          "position": 2,
+          "socket_type": 0
         },
         {
-            "id": 2429684644624,
-            "title": "My Awesome Node 2",
-            "pos_x": -75.0,
-            "pos_y": 0.0,
-            "inputs": [
-                {
-                    "id": 2429684645520,
-                    "index": 0,
-                    "position": 2,
-                    "socket_type": 3
-                },
-                {
-                    "id": 2429684695696,
-                    "index": 1,
-                    "position": 2,
-                    "socket_type": 3
-                },
-                {
-                    "id": 2429684696464,
-                    "index": 2,
-                    "position": 2,
-                    "socket_type": 3
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 2429684697232,
-                    "index": 0,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "content": {}
+          "id": 1967326590288,
+          "index": 1,
+          "position": 2,
+          "socket_type": 0
         },
         {
-            "id": 2429684697936,
-            "title": "My Awesome Node 3",
-            "pos_x": 200.0,
-            "pos_y": -150.0,
-            "inputs": [
-                {
-                    "id": 2429684698832,
-                    "index": 0,
-                    "position": 2,
-                    "socket_type": 2
-                },
-                {
-                    "id": 2429684699792,
-                    "index": 1,
-                    "position": 2,
-                    "socket_type": 2
-                },
-                {
-                    "id": 2429684700560,
-                    "index": 2,
-                    "position": 2,
-                    "socket_type": 2
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 2429684701328,
-                    "index": 0,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "content": {}
+          "id": 1967326591120,
+          "index": 2,
+          "position": 2,
+          "socket_type": 0
         }
-    ],
-    "edges": [
+      ],
+      "outputs": [
         {
-            "id": 2429684782800,
-            "edge_type": 2,
-            "start": 2429684643920,
-            "end": 2429684696464
+          "id": 1967326591952,
+          "index": 0,
+          "position": 3,
+          "socket_type": 1
+        }
+      ],
+      "content": {}
+    },
+    {
+      "id": 1967326592720,
+      "title": "My Awesome Node 2",
+      "pos_x": -75.0,
+      "pos_y": 0.0,
+      "inputs": [
+        {
+          "id": 1967326626576,
+          "index": 0,
+          "position": 2,
+          "socket_type": 3
         },
         {
-            "id": 2167661478800,
-            "edge_type": 2,
-            "start": 2429684697232,
-            "end": 2429684700560
+          "id": 1967326627600,
+          "index": 1,
+          "position": 2,
+          "socket_type": 3
+        },
+        {
+          "id": 1967326628432,
+          "index": 2,
+          "position": 2,
+          "socket_type": 3
         }
-    ]
+      ],
+      "outputs": [
+        {
+          "id": 1967326629264,
+          "index": 0,
+          "position": 3,
+          "socket_type": 1
+        }
+      ],
+      "content": {}
+    },
+    {
+      "id": 1967326630032,
+      "title": "My Awesome Node 3",
+      "pos_x": 200.0,
+      "pos_y": -150.0,
+      "inputs": [
+        {
+          "id": 1967326631056,
+          "index": 0,
+          "position": 2,
+          "socket_type": 2
+        },
+        {
+          "id": 1967326632080,
+          "index": 1,
+          "position": 2,
+          "socket_type": 2
+        },
+        {
+          "id": 1967326632912,
+          "index": 2,
+          "position": 2,
+          "socket_type": 2
+        }
+      ],
+      "outputs": [
+        {
+          "id": 1967326633744,
+          "index": 0,
+          "position": 3,
+          "socket_type": 1
+        }
+      ],
+      "content": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": 1967326713232,
+      "uuid": "0d38f9f5-b56a-499f-af59-82f31151a5ca",
+      "edge_type": 2,
+      "start": 1967326591952,
+      "end": 1967326628432
+    },
+    {
+      "id": 1967326712784,
+      "uuid": "80bc78f2-6587-425a-8401-cabcea569762",
+      "edge_type": 2,
+      "start": 1967326629264,
+      "end": 1967326632080
+    },
+    {
+      "id": 1967326712144,
+      "uuid": "6c6b95b7-aa92-48fb-b5e1-0cdab06fbe84",
+      "edge_type": 2,
+      "start": 1967326633744,
+      "end": 1967326590288
+    }
+  ]
 }

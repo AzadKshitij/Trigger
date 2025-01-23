@@ -34,9 +34,11 @@ class Socket(Serializable):
         return "<Socket %s..%s>" % (hex(id(self))[2:5], hex(id(self))[-3:])
 
     def getSocketPosition(self):
-        if DEBUG: print("  GSP: ", self.index, self.position, "node:", self.node)
+        if DEBUG:
+            print("  GSP: ", self.index, self.position, "node:", self.node)
         res = self.node.getSocketPosition(self.index, self.position)
-        if DEBUG: print("  res", res)
+        if DEBUG:
+            print("  res", res)
         return res
 
     def setConnectedEdge(self, edge=None):
@@ -46,7 +48,7 @@ class Socket(Serializable):
         return self.edge is not None
 
     def serialize(self):
-        print("Serialize sockets!")
+        # print("Serialize sockets!")
         return OrderedDict([
             ('id', self.id),
             ('index', self.index),

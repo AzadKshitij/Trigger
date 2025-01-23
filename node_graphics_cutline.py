@@ -3,7 +3,7 @@ from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 
 
-class QDMCutLine(QGraphicsItem):
+class QTRCutLine(QGraphicsItem):
     def __init__(self, parent=None):
         super().__init__(parent)
 

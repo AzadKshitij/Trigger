@@ -4,9 +4,8 @@ from PyQt6.QtGui import *
 
 from node_graphics_socket import QTRGraphicsSocket
 from node_graphics_edge import QTRGraphicsEdge
-
 from node_edge import Edge, EDGE_TYPE_BEZIER
-from node_graphics_cutline import QDMCutLine
+from node_graphics_cutline import QTRCutLine
 
 MODE_NOOP = 1
 MODE_EDGE_DRAG = 2
@@ -40,7 +39,7 @@ class QTRGraphicsView(QGraphicsView):
         self.zoomRange = [0, 10]
 
         # cutline
-        self.cutline = QDMCutLine()
+        self.cutline = QTRCutLine()
         self.grScene.addItem(self.cutline)
 
     def initUI(self):
@@ -121,8 +120,8 @@ class QTRGraphicsView(QGraphicsView):
         # we store the position of last LMB click
         self.last_lmb_click_scene_pos = self.mapToScene(event.pos())
 
-        if DEBUG:
-            print("LMB Click on", item, self.debug_modifiers(event))
+        # if DEBUG:
+        #     print("LMB Click on", item, self.debug_modifiers(event))
 
         # logic
         if hasattr(item, "node") or isinstance(item, QTRGraphicsEdge)  or item is None:
@@ -200,6 +199,9 @@ class QTRGraphicsView(QGraphicsView):
             self.mode = MODE_NOOP
             return
 
+        if self.dragMode() == QGraphicsView.DragMode.RubberBandDrag:
+            self.grScene.scene.history.storeHistory("Selection changed")
+
         super().mouseReleaseEvent(event)
 
     def rightMouseButtonPress(self, event):
@@ -251,10 +253,20 @@ class QTRGraphicsView(QGraphicsView):
         elif event.key() == Qt.Key.Key_L and (event.modifiers() & Qt.KeyboardModifier.ControlModifier):
             print("Load File!")
             self.grScene.scene.loadFromFile("graph.json.txt")
-
+        elif event.key() == Qt.Key.Key_Z and (event.modifiers() & Qt.KeyboardModifier.ControlModifier) and not (event.modifiers() & Qt.KeyboardModifier.ShiftModifier):
+            self.grScene.scene.history.undo()
+        elif event.key() == Qt.Key.Key_Z and (event.modifiers() & Qt.KeyboardModifier.ControlModifier) and (event.modifiers() & Qt.KeyboardModifier.ShiftModifier):
+            self.grScene.scene.history.redo()
+        elif event.key() == Qt.Key.Key_H:
+            print("HISTORY:     len(%d)" % len(self.grScene.scene.history.history_stack),
+                  " -- current_step", self.grScene.scene.history.history_current_step)
+            ix = 0
+            for item in self.grScene.scene.history.history_stack:
+                print("#", ix, "--", item['desc'])
+                ix += 1
 
         else:
-            super().keyPressEvent(event)
+                super().keyPressEvent(event)
 
     def keyReleaseEvent(self, event):
         # when escape key is pressed
@@ -306,6 +318,7 @@ class QTRGraphicsView(QGraphicsView):
             for edge in self.grScene.scene.edges:
                 if edge.grEdge.intersectsWith(p1, p2):
                     edge.remove()
+                    self.grScene.scene.history.storeHistory("Delete cutted edges")
 
     def deleteSelected(self):
         for item in self.grScene.selectedItems():
@@ -313,6 +326,8 @@ class QTRGraphicsView(QGraphicsView):
                 item.edge.remove()
             elif hasattr(item, 'node'):
                 item.node.remove()
+        self.grScene.scene.history.storeHistory("Delete selected")
+
 
     def debug_modifiers(self, event):
         out = "MODS: "
@@ -345,7 +360,7 @@ class QTRGraphicsView(QGraphicsView):
         """ return True if skip the rest of the code """
         self.mode = MODE_NOOP
         if DEBUG:
-            print('View::edgeDragEnd ~ End dragging edge')
+            print('View::edgeDragEnd ~ End dragging edge', item.socket)
 
         if type(item) is QTRGraphicsSocket:
             if item.socket != self.last_start_socket:
@@ -358,13 +373,15 @@ class QTRGraphicsView(QGraphicsView):
                 if DEBUG:
                     print('View::edgeDragEnd ~   assign End Socket', item.socket)
 
-                if self.previousEdge is not None: self.previousEdge.remove()
+                if self.previousEdge is not None:
+                    self.previousEdge.remove()
 
                 if DEBUG:
                     print('View::edgeDragEnd ~  previous edge removed')
 
                 self.dragEdge.start_socket = self.last_start_socket
                 self.dragEdge.end_socket = item.socket
+
                 self.dragEdge.start_socket.setConnectedEdge(self.dragEdge)
                 self.dragEdge.end_socket.setConnectedEdge(self.dragEdge)
 
@@ -372,7 +389,9 @@ class QTRGraphicsView(QGraphicsView):
                     print('View::edgeDragEnd ~  reassigned start & end sockets to drag edge')
 
                 self.dragEdge.updatePositions()
+                self.grScene.scene.history.storeHistory("Created new edge by dragging")
                 return True
+
 
         if DEBUG:
             print('View::edgeDragEnd ~ End dragging edge')

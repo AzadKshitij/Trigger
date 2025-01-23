@@ -8,7 +8,7 @@ from node_edge import Edge, EDGE_TYPE_BEZIER, EDGE_TYPE_DIRECT
 from node_graphics_view import QTRGraphicsView
 
 
-class NodeEditorWnd(QWidget):
+class NodeEditorWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 

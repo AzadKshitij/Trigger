@@ -1,6 +1,6 @@
 import sys
 from PyQt6.QtWidgets import *
-from node_editor_wnd import NodeEditorWnd
+from node_editor_widget import NodeEditorWidget
 from config_parser import read_config
 
 
@@ -8,6 +8,6 @@ from config_parser import read_config
 if __name__ == '__main__':
     read_config()
     app = QApplication(sys.argv)
-    wnd = NodeEditorWnd()
+    wnd = NodeEditorWidget()
 
     sys.exit(app.exec())
