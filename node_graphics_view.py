@@ -17,6 +17,8 @@ DEBUG = True
 
 
 class QTRGraphicsView(QGraphicsView):
+    scenePosChanged = pyqtSignal(int, int)
+
     def __init__(self, grScene, parent=None):
         super().__init__(parent)
         self.grScene = grScene
@@ -31,6 +33,7 @@ class QTRGraphicsView(QGraphicsView):
 
         self.mode = MODE_NOOP
         self.editingFlag = False
+        self.rubberBandDraggingRectangle = False
 
         self.zoomInFactor = 1.15
         self.zoomClamp = False
@@ -47,13 +50,16 @@ class QTRGraphicsView(QGraphicsView):
                             QPainter.RenderHint.SmoothPixmapTransform |
                             QPainter.RenderHint.TextAntialiasing)
 
-        self.setViewportUpdateMode(QGraphicsView.ViewportUpdateMode.FullViewportUpdate)
+        self.setViewportUpdateMode(
+            QGraphicsView.ViewportUpdateMode.FullViewportUpdate)
 
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         # MouseButton.MiddleButton
 
-        self.setTransformationAnchor(QGraphicsView.ViewportAnchor.AnchorUnderMouse)
+        self.setTransformationAnchor(
+            QGraphicsView.ViewportAnchor.AnchorUnderMouse)
         self.setDragMode(QGraphicsView.DragMode.RubberBandDrag)
 
     def mousePressEvent(self, event: QMouseEvent):
@@ -111,7 +117,7 @@ class QTRGraphicsView(QGraphicsView):
             event.modifiers()  # Any active modifiers (e.g., Shift, Ctrl)
         )
         super().mouseReleaseEvent(fakeEvent)
-        self.setDragMode(QGraphicsView.DragMode.NoDrag)
+        self.setDragMode(QGraphicsView.DragMode.RubberBandDrag)
 
     def leftMouseButtonPress(self, event):
         # get item which we clicked on
@@ -124,7 +130,7 @@ class QTRGraphicsView(QGraphicsView):
         #     print("LMB Click on", item, self.debug_modifiers(event))
 
         # logic
-        if hasattr(item, "node") or isinstance(item, QTRGraphicsEdge)  or item is None:
+        if hasattr(item, "node") or isinstance(item, QTRGraphicsEdge) or item is None:
             if event.modifiers() & Qt.KeyboardModifier.ShiftModifier:
                 event.ignore()
                 fakeEvent = QMouseEvent(
@@ -164,6 +170,8 @@ class QTRGraphicsView(QGraphicsView):
                 super().mouseReleaseEvent(fakeEvent)
                 QApplication.setOverrideCursor(Qt.CursorShape.CrossCursor)
                 return
+            else:
+                self.rubberBandDraggingRectangle = True
 
         super().mousePressEvent(event)
 
@@ -187,7 +195,9 @@ class QTRGraphicsView(QGraphicsView):
         # logic
         if self.mode == MODE_EDGE_DRAG:
             if self.distanceBetweenClickAndReleaseIsOff(event):
+                print(f"Item:::{item}")
                 res = self.edgeDragEnd(item)
+                print(f"Res:::{res}")
                 if res:
                     return
 
@@ -199,8 +209,9 @@ class QTRGraphicsView(QGraphicsView):
             self.mode = MODE_NOOP
             return
 
-        if self.dragMode() == QGraphicsView.DragMode.RubberBandDrag:
+        if self.rubberBandDraggingRectangle:
             self.grScene.scene.history.storeHistory("Selection changed")
+            self.rubberBandDraggingRectangle = False
 
         super().mouseReleaseEvent(event)
 
@@ -209,16 +220,21 @@ class QTRGraphicsView(QGraphicsView):
 
         if DEBUG:
             if isinstance(item, QTRGraphicsEdge):
-                print('RMB DEBUG:', item.edge, ' connecting sockets:', item.edge.start_socket, '<-->', item.edge.end_socket)
+                print('RMB DEBUG:', item.edge, ' connecting sockets:',
+                      item.edge.start_socket, '<-->', item.edge.end_socket)
             if type(item) is QTRGraphicsSocket:
                 print('RMB DEBUG:', item.socket, 'has edge:', item.socket.edge)
 
             if item is None:
                 print('SCENE:')
                 print('  Nodes:')
-                for node in self.grScene.scene.nodes: print('    ', node)
+                for node in self.grScene.scene.nodes:
+                    print('    ', node)
                 print('  Edges:')
-                for edge in self.grScene.scene.edges: print('    ', edge)
+                for edge in self.grScene.scene.edges:
+                    print('    ', edge)
+
+        super().mousePressEvent(event)
 
     def rightMouseButtonRelease(self, event):
         super().mouseReleaseEvent(event)
@@ -234,44 +250,44 @@ class QTRGraphicsView(QGraphicsView):
             self.cutline.line_points.append(pos)
             self.cutline.update()
 
+        self.last_scene_mouse_position = self.mapToScene(event.pos())
+
+        self.scenePosChanged.emit(
+            int(self.last_scene_mouse_position.x()), int(
+                self.last_scene_mouse_position.y())
+        )
+
         super().mouseMoveEvent(event)
 
     def keyPressEvent(self, event):
+        # if event.key() == Qt.Key_Delete:
+        #     if not self.editingFlag:
+        #         self.deleteSelected()
+        #     else:
+        #         super().keyPressEvent(event)
+        # elif event.key() == Qt.Key_S and event.modifiers() & Qt.ControlModifier:
+        #     self.grScene.scene.saveToFile("graph.json.txt")
+        # elif event.key() == Qt.Key_L and event.modifiers() & Qt.ControlModifier:
+        #     self.grScene.scene.loadFromFile("graph.json.txt")
+        # elif event.key() == Qt.Key_Z and event.modifiers() & Qt.ControlModifier and not event.modifiers() & Qt.ShiftModifier:
+        #     self.grScene.scene.history.undo()
+        # elif event.key() == Qt.Key_Z and event.modifiers() & Qt.ControlModifier and event.modifiers() & Qt.ShiftModifier:
+        #     self.grScene.scene.history.redo()
+        # elif event.key() == Qt.Key_H:
+        #     print("HISTORY:     len(%d)" % len(self.grScene.scene.history.history_stack),
+        #           " -- current_step", self.grScene.scene.history.history_current_step)
+        #     ix = 0
+        #     for item in self.grScene.scene.history.history_stack:
+        #         print("#", ix, "--", item['desc'])
+        #         ix += 1
+        # else:
+
+        super().keyPressEvent(event)
+
+    # def keyReleaseEvent(self, event):
         # when escape key is pressed
-        if event.key() == Qt.Key.Key_Control:
-            self.is_zooming = True
-
-        if event.key() == Qt.Key.Key_Delete:
-            if not self.editingFlag:
-                self.deleteSelected()
-            else:
-                super().keyPressEvent(event)
-
-        elif event.key() == Qt.Key.Key_S and (event.modifiers() & Qt.KeyboardModifier.ControlModifier):
-            print("Save File!")
-            self.grScene.scene.saveToFile("graph.json.txt")
-        elif event.key() == Qt.Key.Key_L and (event.modifiers() & Qt.KeyboardModifier.ControlModifier):
-            print("Load File!")
-            self.grScene.scene.loadFromFile("graph.json.txt")
-        elif event.key() == Qt.Key.Key_Z and (event.modifiers() & Qt.KeyboardModifier.ControlModifier) and not (event.modifiers() & Qt.KeyboardModifier.ShiftModifier):
-            self.grScene.scene.history.undo()
-        elif event.key() == Qt.Key.Key_Z and (event.modifiers() & Qt.KeyboardModifier.ControlModifier) and (event.modifiers() & Qt.KeyboardModifier.ShiftModifier):
-            self.grScene.scene.history.redo()
-        elif event.key() == Qt.Key.Key_H:
-            print("HISTORY:     len(%d)" % len(self.grScene.scene.history.history_stack),
-                  " -- current_step", self.grScene.scene.history.history_current_step)
-            ix = 0
-            for item in self.grScene.scene.history.history_stack:
-                print("#", ix, "--", item['desc'])
-                ix += 1
-
-        else:
-                super().keyPressEvent(event)
-
-    def keyReleaseEvent(self, event):
-        # when escape key is pressed
-        if event.key() == Qt.Key.Key_Control:
-            self.is_zooming = False
+        # if event.key() == Qt.Key.Key_Control:
+        #     self.is_zooming = False
 
     def wheelEvent(self, event):
         # if self.is_zooming:
@@ -299,11 +315,11 @@ class QTRGraphicsView(QGraphicsView):
             if not clampled:
                 self.scale(zoomFactor, zoomFactor)
 
-
         elif event.modifiers() == Qt.KeyboardModifier.ShiftModifier:
             # Redirect vertical scrolling to horizontal scrolling
             scroll_amount = event.angleDelta().y()  # Get the vertical delta
-            self.horizontalScrollBar().setValue(self.horizontalScrollBar().value() - scroll_amount)
+            self.horizontalScrollBar().setValue(
+                self.horizontalScrollBar().value() - scroll_amount)
             # self.horizontalScrollBar().setValue(2)
 
         else:
@@ -318,7 +334,8 @@ class QTRGraphicsView(QGraphicsView):
             for edge in self.grScene.scene.edges:
                 if edge.grEdge.intersectsWith(p1, p2):
                     edge.remove()
-                    self.grScene.scene.history.storeHistory("Delete cutted edges")
+                    self.grScene.scene.history.storeHistory(
+                        "Delete cut edges", setModified=True)
 
     def deleteSelected(self):
         for item in self.grScene.selectedItems():
@@ -326,8 +343,8 @@ class QTRGraphicsView(QGraphicsView):
                 item.edge.remove()
             elif hasattr(item, 'node'):
                 item.node.remove()
-        self.grScene.scene.history.storeHistory("Delete selected")
-
+        self.grScene.scene.history.storeHistory(
+            "Delete selected", setModified=True)
 
     def debug_modifiers(self, event):
         out = "MODS: "
@@ -352,20 +369,21 @@ class QTRGraphicsView(QGraphicsView):
 
         self.previousEdge = item.socket.edge
         self.last_start_socket = item.socket
-        self.dragEdge = Edge(self.grScene.scene, item.socket, None, EDGE_TYPE_BEZIER)
+        self.dragEdge = Edge(self.grScene.scene,
+                             item.socket, None, EDGE_TYPE_BEZIER)
         if DEBUG:
             print('View::edgeDragStart ~   dragEdge:', self.dragEdge)
 
     def edgeDragEnd(self, item):
         """ return True if skip the rest of the code """
+
         self.mode = MODE_NOOP
-        if DEBUG:
-            print('View::edgeDragEnd ~ End dragging edge', item.socket)
 
         if type(item) is QTRGraphicsSocket:
             if item.socket != self.last_start_socket:
                 if DEBUG:
-                    print('View::edgeDragEnd ~   previous edge:', self.previousEdge)
+                    print('View::edgeDragEnd ~   previous edge:',
+                          self.previousEdge)
 
                 if item.socket.hasEdge():
                     item.socket.edge.remove()
@@ -386,12 +404,13 @@ class QTRGraphicsView(QGraphicsView):
                 self.dragEdge.end_socket.setConnectedEdge(self.dragEdge)
 
                 if DEBUG:
-                    print('View::edgeDragEnd ~  reassigned start & end sockets to drag edge')
+                    print(
+                        'View::edgeDragEnd ~  reassigned start & end sockets to drag edge')
 
                 self.dragEdge.updatePositions()
-                self.grScene.scene.history.storeHistory("Created new edge by dragging")
+                self.grScene.scene.history.storeHistory(
+                    "Created new edge by dragging", setModified=True)
                 return True
-
 
         if DEBUG:
             print('View::edgeDragEnd ~ End dragging edge')
@@ -400,7 +419,8 @@ class QTRGraphicsView(QGraphicsView):
         self.dragEdge = None
 
         if DEBUG:
-            print('View::edgeDragEnd ~ about to set socket to previous edge:', self.previousEdge)
+            print(
+                'View::edgeDragEnd ~ about to set socket to previous edge:', self.previousEdge)
 
         if self.previousEdge is not None:
             self.previousEdge.start_socket.edge = self.previousEdge

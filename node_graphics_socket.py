@@ -19,7 +19,6 @@ class QTRGraphicsSocket(QGraphicsItem):
             QColor("#FFdbe220"),
         ]
         self._color_background = self._colors[socket_type]
-
         self._color_outline = QColor("#FF000000")
 
         self._pen = QPen(self._color_outline)
@@ -33,8 +32,9 @@ class QTRGraphicsSocket(QGraphicsItem):
         painter.setBrush(self._brush)
         painter.setPen(self._pen)
         # Calculate the position for the circle (centered at (0, 0))
-        painter.translate(self.boundingRect().center())
-        painter.drawEllipse(-self.radius, -self.radius, 2 * self.radius, 2 * self.radius)
+        # painter.translate(self.boundingRect().center())
+        painter.drawEllipse(-self.radius, -self.radius,
+                            2 * self.radius, 2 * self.radius)
 
     def boundingRect(self):
         return QRectF(

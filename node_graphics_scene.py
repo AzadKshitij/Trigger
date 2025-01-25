@@ -3,8 +3,6 @@ from PyQt6.QtWidgets import QGraphicsScene, QGraphicsSceneMouseEvent
 from PyQt6.QtGui import QColor, QPen
 from PyQt6.QtCore import QLine, Qt, QPointF
 
-from config_parser import theme_dark
-
 
 class QTRGraphicsScene(QGraphicsScene):
     def __init__(self, scene, parent=None):
@@ -36,6 +34,7 @@ class QTRGraphicsScene(QGraphicsScene):
         # create grid
         l, r, t, b = int(floor(rect.left())), int(ceil(rect.right())), \
             int(floor(rect.top())), int(ceil(rect.bottom()))
+
         f_left = l - (l % self.gridSize)
         f_top = t - (t % self.gridSize)
 
@@ -59,4 +58,3 @@ class QTRGraphicsScene(QGraphicsScene):
 
         painter.setPen(self._pen_dark)
         painter.drawLines(*lines_dark)
-

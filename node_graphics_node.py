@@ -3,7 +3,6 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 
 
-
 class QTRGraphicsNode(QGraphicsItem):
     def __init__(self, node, parent=None):
         super().__init__(parent)
@@ -22,6 +21,8 @@ class QTRGraphicsNode(QGraphicsItem):
         self._pen_width = 1.5  # Pen width for outline
         self._pen_default = QPen(QColor("#7F000000"), self._pen_width)
         self._pen_selected = QPen(QColor("#FFFFA637"), self._pen_width)
+        # self._pen_default = QPen(QColor("#7F000000"), self._pen_width)
+        # self._pen_selected = QPen(QColor("#FFFFA637"), self._pen_width)
 
         self._brush_title = QBrush(QColor("#FF313131"))
         self._brush_background = QBrush(QColor("#E3212121"))
@@ -88,11 +89,11 @@ class QTRGraphicsNode(QGraphicsItem):
         # Set the widget for the proxy
         self.grContent.setWidget(self.content)
 
-
     def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget: QWidget | None = None) -> None:
         # Title background
         path_title = QPainterPath()
-        path_title.addRoundedRect(0, 0, self.width, self.title_height, self.edge_size, self.edge_size)
+        path_title.addRoundedRect(
+            0, 0, self.width, self.title_height, self.edge_size, self.edge_size)
         painter.setPen(Qt.PenStyle.NoPen)
         painter.setBrush(self._brush_title)
         painter.drawPath(path_title)
@@ -107,7 +108,8 @@ class QTRGraphicsNode(QGraphicsItem):
 
         # Outline
         path_outline = QPainterPath()
-        path_outline.addRoundedRect(0, 0, self.width, self.height, self.edge_size, self.edge_size)
+        path_outline.addRoundedRect(
+            0, 0, self.width, self.height, self.edge_size, self.edge_size)
         pen = self._pen_selected if self.isSelected() else self._pen_default
         painter.setPen(pen)
         painter.setBrush(Qt.BrushStyle.NoBrush)
@@ -118,16 +120,20 @@ class QTRGraphicsNode(QGraphicsItem):
 
     def mouseMoveEvent(self, event):
         super().mouseMoveEvent(event)
-        # optimize me! just update the selected nodes
+        # TODO: optimize me! just update the selected nodes
         for node in self.scene().scene.nodes:
             if node.grNode.isSelected():
                 node.updateConnectedEdges()
 
-                self.wasMoved = True
+        if self.wasMoved:
+            self.wasMoved = False
+            self.node.scene.history.storeHistory(
+                "Node moved", setModified=True)
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
 
         if self.wasMoved:
             self.wasMoved = False
-            self.node.scene.history.storeHistory("Node moved")
+            self.node.scene.history.storeHistory(
+                "Node moved", setModified=True)

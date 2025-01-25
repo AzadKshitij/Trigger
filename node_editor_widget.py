@@ -18,7 +18,6 @@ class NodeEditorWidget(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(200, 200, 800, 600)
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
@@ -26,34 +25,26 @@ class NodeEditorWidget(QWidget):
         # create graphic scene
 
         self.scene = Scene()
-        # self.grScene = self.scene.grScene
-        # node1 = Node(self.scene, "My Awesome Node 1", inputs=[1, 2, 3], outputs=[1])
-        # node2 = Node(self.scene, "My Awesome Node 2", inputs=[1, 2, 3], outputs=[1])
-        # node3 = Node(self.scene, "My Awesome Node 3", inputs=[1, 2, 3], outputs=[1])
-        # node1.setPos(-350, -250)
-        # node2.setPos(-75, 0)
-        # node3.setPos(200, -150)
+        self.addNodes()
 
         # create graphic view
 
         self.view = QTRGraphicsView(self.scene.grScene, self)
-
         self.layout.addWidget(self.view)
-        self.setWindowTitle("Trigger")
-        # self.addDebugContent()
-        self.addNodes()
 
-        self.show()
+        # self.addDebugContent()
 
     def addDebugContent(self):
         greenBrush = QBrush(QColor("#6ac977"))
         outlinePen = QPen(QColor("#000000"))
         outlinePen.setWidth(2)
 
-        rect = self.grScene.addRect(-100, -100, 80, 100, outlinePen, greenBrush)
+        rect = self.grScene.addRect(-100, -100, 80,
+                                    100, outlinePen, greenBrush)
         rect.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
 
-        text = self.grScene.addText("This is my Awesome text!", QFont("Ubuntu"))
+        text = self.grScene.addText(
+            "This is my Awesome text!", QFont("Ubuntu"))
         text.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
         text.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
         text.setDefaultTextColor(QColor.fromRgbF(1.0, 1.0, 1.0))
@@ -73,19 +64,15 @@ class NodeEditorWidget(QWidget):
         line.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
 
     def addNodes(self):
-        node1 = Node(self.scene, "My Awesome Node 1", inputs=[0, 0, 0], outputs=[1])
-        node2 = Node(self.scene, "My Awesome Node 2", inputs=[3, 3, 3], outputs=[1])
-        node3 = Node(self.scene, "My Awesome Node 3", inputs=[2, 2, 2], outputs=[1])
+        node1 = Node(self.scene, "My Awesome Node 1",
+                     inputs=[0, 0, 0], outputs=[1])
+        node2 = Node(self.scene, "My Awesome Node 2",
+                     inputs=[3, 3, 3], outputs=[1])
+        node3 = Node(self.scene, "My Awesome Node 3",
+                     inputs=[2, 2, 2], outputs=[1])
         node1.setPos(-350, -250)
         node2.setPos(-75, 0)
         node3.setPos(200, -150)
-
-    # def loadStylesheet(self, filename):
-    #     print('STYLE loading:', filename)
-    #     file = QFile(filename)
-    #     file.open(QFile.OpenModeFlag.ReadOnly | QFile.Text)
-    #     stylesheet = file.readAll()
-    #     QApplication.instance().setStyleSheet(str(stylesheet, encoding='utf-8'))
 
     def loadStylesheet(self, filename):
 

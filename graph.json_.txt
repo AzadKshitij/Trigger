@@ -1,0 +1,120 @@
+{
+  "id": 2281999778192,
+  "scene_width": 64000,
+  "scene_height": 64000,
+  "nodes": [
+    {
+      "id": 2282000220624,
+      "title": "My Awesome Node 1",
+      "pos_x": -350.0,
+      "pos_y": -250.0,
+      "inputs": [
+        {
+          "id": 2282000358800,
+          "index": 0,
+          "position": 2,
+          "socket_type": 0
+        },
+        {
+          "id": 2282000359440,
+          "index": 1,
+          "position": 2,
+          "socket_type": 0
+        },
+        {
+          "id": 2282000362640,
+          "index": 2,
+          "position": 2,
+          "socket_type": 0
+        }
+      ],
+      "outputs": [
+        {
+          "id": 2282000363408,
+          "index": 0,
+          "position": 3,
+          "socket_type": 1
+        }
+      ],
+      "content": {}
+    },
+    {
+      "id": 2282000364176,
+      "title": "My Awesome Node 2",
+      "pos_x": -133.0,
+      "pos_y": -59.0,
+      "inputs": [
+        {
+          "id": 2282000365136,
+          "index": 0,
+          "position": 2,
+          "socket_type": 3
+        },
+        {
+          "id": 2282000365968,
+          "index": 1,
+          "position": 2,
+          "socket_type": 3
+        },
+        {
+          "id": 2282000366736,
+          "index": 2,
+          "position": 2,
+          "socket_type": 3
+        }
+      ],
+      "outputs": [
+        {
+          "id": 2282000367504,
+          "index": 0,
+          "position": 3,
+          "socket_type": 1
+        }
+      ],
+      "content": {}
+    },
+    {
+      "id": 2282059793104,
+      "title": "My Awesome Node 3",
+      "pos_x": 200.0,
+      "pos_y": -150.0,
+      "inputs": [
+        {
+          "id": 2282059794064,
+          "index": 0,
+          "position": 2,
+          "socket_type": 2
+        },
+        {
+          "id": 2282059794896,
+          "index": 1,
+          "position": 2,
+          "socket_type": 2
+        },
+        {
+          "id": 2282059795664,
+          "index": 2,
+          "position": 2,
+          "socket_type": 2
+        }
+      ],
+      "outputs": [
+        {
+          "id": 2282059796432,
+          "index": 0,
+          "position": 3,
+          "socket_type": 1
+        }
+      ],
+      "content": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": 2282059905744,
+      "edge_type": 2,
+      "start": 2282000363408,
+      "end": 2282000366736
+    }
+  ]
+}

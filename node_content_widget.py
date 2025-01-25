@@ -1,6 +1,7 @@
 from collections import OrderedDict
-from node_serializable import Serializable
 from PyQt6.QtWidgets import *
+
+from node_serializable import Serializable
 
 
 class QTRNodeContentWidget(QWidget, Serializable):
@@ -21,7 +22,6 @@ class QTRNodeContentWidget(QWidget, Serializable):
 
     def setEditingFlag(self, value):
         self.node.scene.grScene.views()[0].editingFlag = value
-
 
     def serialize(self):
         return OrderedDict([

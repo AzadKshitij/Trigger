@@ -19,13 +19,6 @@ class Edge(Serializable):
 
         self.scene.addEdge(self)
 
-        # self.grEdge = QTRGraphicsEdgeDirect(self) if edge_type == EDGE_TYPE_DIRECT else QTRGraphicsEdgeBezier(self)
-
-        # self.updatePositions()
-
-        # self.scene.grScene.addItem(self.grEdge)
-        # self.scene.addEdge(self)
-
     def __str__(self):
         return "<Edge %s..%s>" % (hex(id(self))[2:5], hex(id(self))[-3:])
 
@@ -59,6 +52,7 @@ class Edge(Serializable):
             self.scene.grScene.removeItem(self.grEdge)
         print(f"Edge Value: {value}")
         self._edge_type = value
+
         if self.edge_type == EDGE_TYPE_DIRECT:
             print("EDGE_TYPE_DIRECT")
             self.grEdge = QTRGraphicsEdgeDirect(self)
@@ -74,7 +68,6 @@ class Edge(Serializable):
 
         if self.start_socket is not None:
             self.updatePositions()
-
 
     def updatePositions(self):
         source_pos = self.start_socket.getSocketPosition()
@@ -101,7 +94,6 @@ class Edge(Serializable):
             self.end_socket.edge = None
         self.end_socket = None
         self.start_socket = None
-
 
     def remove(self):
         if DEBUG:
@@ -131,9 +123,10 @@ class Edge(Serializable):
             ('end', self.end_socket.id),
         ])
 
-    def deserialize(self, data, hashmap={}):
+    def deserialize(self, data, hashmap={}, restore_id=True):
+        if restore_id:
+            self.id = data['id']
         self.id = data['id']
         self.start_socket = hashmap[data['start']]
         self.end_socket = hashmap[data['end']]
         self.edge_type = data['edge_type']
-

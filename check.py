@@ -1,77 +1,79 @@
-from PyQt6.QtCore import Qt, QPointF
-from PyQt6.QtGui import QMouseEvent, QPainter, QPen
-from PyQt6.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsLineItem, QApplication
+# # Using print
+# import logging
 
 
-class CustomGraphicsView(QGraphicsView):
-
-    def __init__(self, scene):
-        super().__init__(scene)
-        self.setRenderHint(QPainter.RenderHint.Antialiasing)
-        self.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
-
-        self.is_dragging = False  # Flag to check if the view is being dragged
-        self.last_pos = QPointF()  # Last mouse position during drag
-
-        # Call the function to draw a line when the view is created
-        self.draw_line()
-
-    def mousePressEvent(self, event: QMouseEvent):
-        # Handle middle mouse button press to start panning
-        if event.button() == Qt.MouseButton.MiddleButton:
-            self.is_dragging = True
-            self.last_pos = event.globalPosition()  # Record initial mouse position
-            self.setCursor(Qt.CursorShape.ClosedHandCursor)  # Change cursor to closed hand
-        else:
-            # Handle other mouse buttons (left or right) normally
-            super().mousePressEvent(event)
-
-    def mouseReleaseEvent(self, event: QMouseEvent):
-        # Handle middle mouse button release to stop panning
-        if event.button() == Qt.MouseButton.MiddleButton:
-            self.is_dragging = False
-            self.setCursor(Qt.CursorShape.ArrowCursor)  # Reset cursor to normal arrow
-        else:
-            # Handle other mouse buttons (left or right) normally
-            super().mouseReleaseEvent(event)
-
-    def mouseMoveEvent(self, event: QMouseEvent):
-        # Handle mouse move during dragging
-        if self.is_dragging:
-            # Calculate the offset from the last mouse position
-            delta = self.last_pos - event.globalPosition()
-            self.last_pos = event.globalPosition()  # Update last mouse position
-
-            # Move the scene (i.e., move the contents of the view)
-            self.translateScene(delta.x(), delta.y())
-
-        else:
-            super().mouseMoveEvent(event)
-
-    def translateScene(self, dx, dy):
-        # Translate the scene by the given delta
-        scene_rect = self.sceneRect()
-        new_scene_rect = scene_rect.translated(dx, dy)
-        self.setSceneRect(new_scene_rect)  # Move the scene within the view
-
-    def draw_line(self):
-        # Draw a line in the scene
-        line_item = QGraphicsLineItem(0, 0, 100, 100)  # Line from (0, 0) to (100, 100)
-
-        # Customize the line's appearance (optional)
-        pen = QPen(Qt.GlobalColor.blue)
-        pen.setWidth(3)
-        line_item.setPen(pen)
-
-        # Add the line to the scene
-        self.scene().addItem(line_item)
+# def some_function_(x, y):
+#     print('printing')
+#     print(f"some_function called with args: {x}, {y}")
+#     result = x + y
+#     print(f"Result: {result}")
+#     return result
 
 
-# Sample usage of the custom QGraphicsView
-app = QApplication([])
-scene = QGraphicsScene()
-view = CustomGraphicsView(scene)
-view.setScene(scene)
-view.setSceneRect(-400, -300, 800, 600)  # Set scene size
-view.show()
-app.exec()
+# # Using logging
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.DEBUG)
+
+
+# def some_function(x, y):
+#     print('logger')
+#     logger.debug(f"some_function called with args: {x}, {y}")
+#     result = x + y
+#     logger.info(f"Result: {result}")
+#     return result
+
+
+# some_function(1, 2)
+# some_function_(1, 2)
+
+# import logging
+
+# # Create a logger
+# logger = logging.getLogger('my_logger')
+# logger.setLevel(logging.DEBUG)
+
+# # Create a formatter to define the log format
+# formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+# # Create a file handler to write logs to a file
+# file_handler = logging.FileHandler('app.log')
+# file_handler.setLevel(logging.DEBUG)
+# file_handler.setFormatter(formatter)
+
+# # Create a stream handler to print logs to the console
+# console_handler = logging.StreamHandler()
+# # You can set the desired log level for console output
+# console_handler.setLevel(logging.INFO)
+# console_handler.setFormatter(formatter)
+
+# # Add the handlers to the logger
+# logger.addHandler(file_handler)
+# logger.addHandler(console_handler)
+
+# # Now you can log messages with different levels
+# logger.debug('This is a debug message')
+# logger.info('This is an info message')
+# logger.warning('This is a warning message')
+# logger.error('This is an error message')
+
+import logging
+
+
+class MyHandler(logging.Handler):
+
+    def __init__(self, level=0):
+        super().__init__(level)
+        print(self.get_name())
+
+    def emit(self, record):
+        print('emited')
+        # Do something with the log record
+        # print(record.getMessage())
+        print(record)
+
+
+logger = logging.getLogger(__name__)
+handler = MyHandler()
+logger.addHandler(handler)
+
+logger.info("This message will be processed by MyHandler.")

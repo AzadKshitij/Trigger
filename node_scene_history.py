@@ -26,19 +26,20 @@ class SceneHistory():
             self.history_current_step += 1
             self.restoreHistory()
 
-
     def restoreHistory(self):
         if DEBUG:
             print("Restoring history... current_step: @%d" % self.history_current_step,
-                        "(%d)" % len(self.history_stack))
+                  "(%d)" % len(self.history_stack))
         self.restoreHistoryStamp(self.history_stack[self.history_current_step])
 
+    def storeHistory(self, desc, setModified=False):
+        if setModified:
+            self.scene.has_been_modified = True
 
-    def storeHistory(self, desc):
         if DEBUG:
             print("Storing history", '"%s"' % desc,
-                        ".... current_step: @%d" % self.history_current_step,
-                        "(%d)" % len(self.history_stack))
+                  ".... current_step: @%d" % self.history_current_step,
+                  "(%d)" % len(self.history_stack))
 
         # if the pointer (history_current_step) is not at the end of history_stack
         if self.history_current_step+1 < len(self.history_stack):
@@ -55,7 +56,6 @@ class SceneHistory():
         self.history_current_step += 1
         if DEBUG:
             print("  -- setting step to:", self.history_current_step)
-
 
     def createHistoryStamp(self, desc):
         sel_obj = {
@@ -77,7 +77,6 @@ class SceneHistory():
         }
 
         return history_stamp
-
 
     def restoreHistoryStamp(self, history_stamp):
         if DEBUG:

@@ -10,6 +10,7 @@ RIGHT_BOTTOM = 4
 
 DEBUG = False
 
+
 class Socket(Serializable):
     def __init__(self, node, index=0, position=LEFT_TOP, socket_type=1):
         super().__init__()
@@ -20,11 +21,10 @@ class Socket(Serializable):
         self.socket_type = socket_type
 
         if DEBUG:
-            print("Socket -- creating with", self.index, self.position, "for node", self.node)
+            print("Socket -- creating with", self.index,
+                  self.position, "for node", self.node)
 
         self.grSocket = QTRGraphicsSocket(self, self.socket_type)
-
-        self.grSocket.setPos(*self.node.getSocketPosition(index, position))
 
         self.grSocket.setPos(*self.node.getSocketPosition(index, position))
 
@@ -56,8 +56,9 @@ class Socket(Serializable):
             ('socket_type', self.socket_type),
         ])
 
-    def deserialize(self, data, hashmap={}):
-        self.id = data['id']
+    def deserialize(self, data, hashmap={}, restore_id=True):
+        if restore_id:
+            self.id = data['id']
         hashmap[data['id']] = self
-        return True
 
+        return True
